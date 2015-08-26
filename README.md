@@ -4,7 +4,7 @@ Arck Avatar Cropper
 
 Responsive avatar cropper for Elgg
 
-![alt text](https://raw.github.com/arckinteractive/arck_cropper/master/screenshots/cropper.png "Cropper")
+![alt text](https://raw.github.com/arckinteractive/arck_avatar/master/screenshots/cropper.png "Cropper")
 
 
 ## Features
