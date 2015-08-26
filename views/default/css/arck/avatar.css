@@ -1,0 +1,17 @@
+.avatar-cropper-module {
+	margin: 10px auto;
+	max-width: 100%;
+	overflow: visible;
+	position: relative;
+}
+.avatar-cropper-module img {
+	max-width: 100%;
+	height: auto;
+}
+.avatar-cropper-module p {
+	margin: 0;
+}
+.avatar-upload-image-block > .elgg-image {
+	max-width: 100px;
+	margin-right: 15px;
+}
