@@ -6,7 +6,7 @@
 $guid = get_input('guid');
 $owner = get_entity($guid);
 
-if (!$owner || !($owner instanceof ElggUser) || !$owner->canEdit()) {
+if (!$owner instanceof ElggUser || !$owner->canEdit()) {
 	register_error(elgg_echo('avatar:upload:fail'));
 	forward(REFERER);
 }
@@ -22,6 +22,8 @@ $filehandler->setFilename("profile/{$owner->guid}master.jpg");
 
 if (!empty($_FILES['avatar']['tmp_name'])) {
 	if ($_FILES['avatar']['error'] == UPLOAD_ERR_OK) {
+		$filehandler->open('write');
+		$filehandler->close();
 		move_uploaded_file($_FILES['avatar']['tmp_name'], $filehandler->getFilenameOnFilestore());
 	}
 }

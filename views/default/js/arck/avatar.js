@@ -1,4 +1,9 @@
-define(['elgg', 'jquery', 'cropper'], function (elgg, $, spinner) {
+define(function (require) {
+
+	var elgg = require('elgg');
+	var $ = require('jquery');
+	var spinner = require('elgg/spinner');
+	require('cropper');
 
 	var $elem = $('input[type="file"].avatar-upload-input');
 	var $form = $elem.closest('form');
@@ -25,8 +30,6 @@ define(['elgg', 'jquery', 'cropper'], function (elgg, $, spinner) {
 		var $form = $elem.closest('form');
 		var $cropper = $form.find('.avatar-cropper-module');
 
-		var file = $elem[0].files[0];
-
 		if ($('img', $cropper).length) {
 			$('img', $cropper).cropper('destroy');
 			$('img', $cropper).remove();
@@ -34,14 +37,21 @@ define(['elgg', 'jquery', 'cropper'], function (elgg, $, spinner) {
 			$form.find('input[type="submit"]').prop('disabled', true).addClass('elgg-state-disabled');
 		}
 
-		if (file && file.type.match(/image.*/)) {
-			var reader = new FileReader();
-			reader.onload = function (e) {
+		var file = $elem[0].files[0];
+		if (!file || !file.type.match(/image.*/)) {
+			elgg.register_error(elgg.echo('arck:avatar:invalid_format'));
+			return;
+		}
 
-				var img = new Image();
-				img.src = reader.result;
-				img.alt = file.name;
+		var reader = new FileReader();
+		reader.onload = function (e) {
 
+			var img = new Image();
+			img.src = reader.result;
+			img.alt = file.name;
+			img.onloadstart = spinner.start;
+			img.onloadend = spinner.stop;
+			img.onload = function () {
 				$('.avatar-cropper-preview', $cropper).html($(img));
 
 				$form.find('input[type="submit"]').prop('disabled', false).removeClass('elgg-state-disabled');
@@ -58,9 +68,9 @@ define(['elgg', 'jquery', 'cropper'], function (elgg, $, spinner) {
 					}
 				});
 			};
+		};
 
-			reader.readAsDataURL(file);
-		}
+		reader.readAsDataURL(file);
 	});
-	
+
 });

@@ -22,6 +22,7 @@ echo elgg_view_module('aside', $upload_title, $upload_mod, array(
 // Cropper module
 $cropper_title = elgg_echo('avatar:crop:title');
 $cropper_mod = elgg_format_element('p', array('class' => 'elgg-text-help'), elgg_echo('avatar:create:instructions'));
+$img = '';
 if ($entity->icontime) {
 	$x = $y = 0;
 	$width = $height = 200;
@@ -40,9 +41,9 @@ if ($entity->icontime) {
 		'data-width' => $width,
 		'data-height' => $height,
 	));
-	$cropper_mod .= elgg_format_element('div', ['class' => 'avatar-cropper-preview'], $img);
 }
 
+$cropper_mod .= elgg_format_element('div', ['class' => 'avatar-cropper-preview'], $img);
 foreach (array('x1', 'y1', 'x2', 'y2') as $coord) {
 	$cropper_mod .= elgg_view('input/hidden', array(
 		'name' => $coord,
