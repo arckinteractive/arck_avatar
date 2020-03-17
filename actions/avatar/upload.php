@@ -25,6 +25,18 @@ if (!empty($_FILES['avatar']['tmp_name'])) {
 		$filehandler->open('write');
 		$filehandler->close();
 		move_uploaded_file($_FILES['avatar']['tmp_name'], $filehandler->getFilenameOnFilestore());
+		
+		// detect width/height
+		// set x2/y2 to max centered square
+		$sizeinfo = getimagesize($filehandler->getFilenameOnFilestore());
+
+		if (is_array($sizeinfo) && $sizeinfo[0] && $sizeinfo[1]) {
+			$dimension = min($sizeinfo[0], $sizeinfo[1]);
+			$x1 = ($sizeinfo[0] - $dimension) / 2;
+			$y1 = ($sizeinfo[1] - $dimension) / 2;
+			$x2 = $x1 + $dimension;
+			$y2 = $y1 + $dimension;
+		}
 	}
 }
 
