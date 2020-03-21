@@ -24,16 +24,30 @@ if (!empty($_FILES['avatar']['tmp_name'])) {
 	if ($_FILES['avatar']['error'] == UPLOAD_ERR_OK) {
 		$filehandler->open('write');
 		$filehandler->close();
-		move_uploaded_file($_FILES['avatar']['tmp_name'], $filehandler->getFilenameOnFilestore());
-		
-		// detect width/height
-		// set x2/y2 to max centered square
-		$sizeinfo = getimagesize($filehandler->getFilenameOnFilestore());
 
-		if (is_array($sizeinfo) && $sizeinfo[0] && $sizeinfo[1]) {
-			$dimension = min($sizeinfo[0], $sizeinfo[1]);
-			$x1 = ($sizeinfo[0] - $dimension) / 2;
-			$y1 = ($sizeinfo[1] - $dimension) / 2;
+		$imginfo = getimagesize($_FILES['avatar']['tmp_name']);
+
+		$requiredMemory1 = ceil($imginfo[0] * $imginfo[1] * 5.35);
+		$requiredMemory2 = ceil($imginfo[0] * $imginfo[1] * ($imginfo['bits'] / 8) * $imginfo['channels'] * 2.5);
+		$requiredMemory = (int)max($requiredMemory1, $requiredMemory2);
+
+		$mem_avail = elgg_get_ini_setting_in_bytes('memory_limit');
+		$mem_used = memory_get_usage();
+		
+		$mem_avail = $mem_avail - $mem_used - 2097152; // 2 MB buffer
+		
+		if ($requiredMemory > $mem_avail) {
+			// we don't have enough memory for any manipulation
+			register_error(elgg_echo('arck:avatar:image_too_large'));
+			forward(REFERER);
+		}
+
+		move_uploaded_file($_FILES['avatar']['tmp_name'], $filehandler->getFilenameOnFilestore());
+
+		if (is_array($imginfo) && $imginfo[0] && $imginfo[1]) {
+			$dimension = min($imginfo[0], $imginfo[1]);
+			$x1 = ($imginfo[0] - $dimension) / 2;
+			$y1 = ($imginfo[1] - $dimension) / 2;
 			$x2 = $x1 + $dimension;
 			$y2 = $y1 + $dimension;
 		}
